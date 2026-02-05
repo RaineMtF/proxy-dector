@@ -1,5 +1,5 @@
 # syntax=docker/dockerfile:1
-FROM node:20-slim
+FROM node:lts
 
 # Install system dependencies for Chrome
 RUN apt-get update && apt-get install -y \
