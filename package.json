@@ -18,6 +18,10 @@
     "https-proxy-agent": "^7.0.6",
     "node-cron": "^4.2.1",
     "p-limit": "^3.1.0",
-    "socks-proxy-agent": "^8.0.5"
+    "puppeteer": "^23.0.0",
+    "puppeteer-extra": "^3.3.6",
+    "puppeteer-extra-plugin-stealth": "^2.11.2",
+    "socks-proxy-agent": "^8.0.5",
+    "user-agents": "^1.1.0"
   }
 }
