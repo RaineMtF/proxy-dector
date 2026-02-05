@@ -1,7 +1,6 @@
 # syntax=docker/dockerfile:1
-ENV TZ=Etc/UTC
-
 FROM node:alpine
+ENV TZ=Etc/UTC
 
 # Install dependencies for typical Node.js apps
 RUN apk add --no-cache \
