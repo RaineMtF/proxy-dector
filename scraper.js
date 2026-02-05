@@ -112,7 +112,7 @@ async function scrapePage(config, pageNum = 1) {
             // Fallback to Puppeteer (Stealth)
             html = await scrapeWithPuppeteer(url);
         } catch (puppeteerError) {
-            console.error(`[Scraper] Puppeteer fallback also failed: ${puppeteerError.message}`);
+            console.log(`[Scraper] Puppeteer fallback also failed: ${puppeteerError.message}`);
             return [];
         }
     }
@@ -124,7 +124,7 @@ async function scrapePage(config, pageNum = 1) {
     if (rows.length <= 1) {
         // If it's 403 or empty despite bypass attempts
         if ($('title').text().includes('403') || html.includes('Cloudflare')) {
-            console.error(`[Scraper] Failed to bypass Cloudflare on page ${pageNum} using ${method}.`);
+            console.log(`[Scraper] Failed to bypass Cloudflare on page ${pageNum} using ${method}.`);
             return null;
         }
         console.log(`[Scraper] No data found on page ${pageNum}.`);

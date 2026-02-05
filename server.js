@@ -34,7 +34,7 @@ async function updateProxies() {
         saveAll(validProxies, PUBLIC_DIR);
         console.log(`[${new Date().toISOString()}] === Update completed successfully. ===\n`);
     } catch (error) {
-        console.error(`[${new Date().toISOString()}] !!! Update failed:`, error.message);
+        console.log(`[${new Date().toISOString()}] !!! Update failed:`, error.message);
     }
 }
 
