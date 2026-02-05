@@ -11,14 +11,20 @@ let browser = null;
 
 async function getBrowserInstance() {
     if (browser) return browser;
+    console.log('[Scraper] Launching Puppeteer browser...');
     browser = await puppeteer.launch({
-        headless: true,
+        headless: true, // or 'new' if using latest puppeteer
         args: [
             '--no-sandbox',
             '--disable-setuid-sandbox',
+            '--disable-dev-shm-usage', // Critical for Docker
+            '--disable-accelerated-2d-canvas',
+            '--no-first-run',
+            '--no-zygote',
+            '--disable-gpu',
             '--disable-blink-features=AutomationControlled',
         ],
-        executablePath: process.env.PUPPETEER_EXECUTABLE_PATH || null,
+        executablePath: process.env.PUPPETEER_EXECUTABLE_PATH || '/usr/bin/google-chrome-stable',
     });
     return browser;
 }
@@ -59,21 +65,25 @@ async function scrapeWithPuppeteer(url) {
     
     try {
         await page.setUserAgent(getRandomUserAgent());
-        await page.setExtraHTTPHeaders(getCommonHeaders());
+        // Do not set common headers here as they might conflict with stealth plugin's automatic headers
         
         console.log(`[Scraper] Puppeteer navigating to: ${url}`);
         
         // Use a more human-like navigation
         await page.goto(url, { 
-            waitUntil: 'networkidle2', 
+            waitUntil: 'domcontentloaded', 
             timeout: 60000 
         });
 
-        // Check if we are stuck on CF challenge
-        const content = await page.content();
-        if (content.includes('cf-challenge') || content.includes('cloudflare')) {
-            console.log('[Scraper] Cloudflare challenge detected, waiting for bypass...');
-            await new Promise(resolve => setTimeout(resolve, 5000)); // Wait for auto-solve
+        // Wait a bit for Cloudflare to do its magic (5-10s is typical)
+        console.log('[Scraper] Waiting for Cloudflare/Loading...');
+        await new Promise(resolve => setTimeout(resolve, 8000));
+
+        // Wait specifically for the table if possible
+        try {
+            await page.waitForSelector('table', { timeout: 10000 });
+        } catch (e) {
+            console.log('[Scraper] Table not found after waiting. Possible bypass failure or page structure change.');
         }
 
         const data = await page.content();
